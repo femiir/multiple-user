@@ -332,7 +332,7 @@ You can run the server ```python.manage.py runserver``` and test the api endpoin
 
 🥷🏾🥷🏾Ninja 🥷🏾🥷🏾 out of the box provides documentation that allows you to test your endpoints. You can also test the endpoints using postman or any other API testing tool of your choice.
 
-> you can clone this project from [github](
+> you can clone this project from [github](git@github.com:femiir/multiple-user.git) and run the project to see how it works.
 
 > At the end of the project your folder structure should look like 
 ```
