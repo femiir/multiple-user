@@ -380,6 +380,3 @@ You can run the server ```python.manage.py runserver``` and test the api endpoin
 ### This project focus on using ninja and django to develop a mutilple user system that is scalable 
 
 > I hope you enjoyed this tutorial. If you have any questions or suggestions, feel free to reach out to me on [Twitter](https://twitter.com/femiiir) or [LinkedIn](https://www.linkedin.com/in/femiir/). I would love to hear from you.
-
-
-

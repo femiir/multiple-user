@@ -41,7 +41,7 @@ INSTALLED_APPS = [
 
 ```
 
-### run the command to create the necessary files
+### run the command below to generate the RSA keys that will be used to sign the JWT tokens
 ```zsh
 python manage.py make_rsa
 ```
@@ -163,5 +163,16 @@ Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
 Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
 docs for more detail on building and pushing.
 
+
+> you can clone this project from [github]('https://github.com/femiir/multiple-user/tree/jwt')
+
+
+> I hope you enjoyed this tutorial. If you have any questions or suggestions, feel free to reach out to me on [Twitter](https://twitter.com/femiiir) or [LinkedIn](https://www.linkedin.com/in/femiir/). I would love to hear from you.
+
+
+
+('https://github.com/femiir/multiple-user/tree/jwt')
 ### References
 * [Docker's Python guide](https://docs.docker.com/language/python/)
+
+
