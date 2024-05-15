@@ -23,30 +23,30 @@ In this tutorial, we will create a Django project that has two user types, busin
 
 ### Create env with tool of your choice.
 *conda is used for this tutorial. Feel free to use any env manager of choice*
-```
+```zsh
 conda create -n multipleuser
 ```
 
 ### Activate the model
-```
+```zsh
 conda activate multipleuser
 ```
 
 ###  Install the packages
-```
+```zsh
 pip install Django django-ninja
 ```
 ### start a django project
 
-```
+```zsh
 django-admin startproject config
 ```
 ### Start an app 
-```
+```zsh
 django-admin startapp accounts
 ```
 
-# Create custom user from
+# Create custom user
 The easiest way to construct a compliant custom user model is to inherit from ```AbstractBaseUser```. ```AbstractBaseUser``` provides the core implementation of a user model, including hashed passwords and tokenized password resets.
 
 >**AbstractUser:** Use this option if you are happy with the existing fields on the user model and just want to remove the username field.
@@ -63,7 +63,7 @@ To read more about this topic check out the following
 # Approach to this design
 >I like the make my models as flexible as possible which sees me trying to reduce the amount of hard coding i have to do.<br>So i create a Roles model that will allow for as many user types to be created.What this allows me to do is link this model to my user table in any requirements my system needs either as <br>- foriegn keys(roles can be updated)<br>- One to one(user can be of specific type)<br>- Many to many(user can have multiple roles)
 
-```
+```python
 # accounts/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -79,7 +79,7 @@ class TimeStampedModel(models.Model):
         abstract = True
 ```
 > always good to create a Timestamped model where other models can inherit from
-```
+```python
 class Roles(TimeStampedModel):
     name = models.CharField(max_length=20)
     description = models.TextField()
@@ -128,7 +128,7 @@ class Client(User):
         proxy = True
 ```
 ### create the manager in accounts/managers.py
-```
+```python
 # accounts/managers.py
 from django.db import models
 from django.db.models.query import QuerySet
@@ -147,7 +147,7 @@ class ClientManager(models.Manager):
 
 >Dont forget to point to the custom user in settings.py ```AUTH_USER_MODEL = 'accounts.User'```
 
-```
+```python
 # accounts/admin.py
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
@@ -162,7 +162,7 @@ admin.site.register(Client)
 ```
 
 > Now is a good time to make migrations and migrate our user model
-```
+```zsh
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -170,20 +170,20 @@ Now you have yourself a pluggable user app you can use for all your needs.
 
 
 #### create the super user 
-```
+```zsh
 python manage.py createsuperuser
 ```
 
-# create the api app
+### create the api app
 You can call me the 🥷🏾🥷🏾[Django-ninja](https://django-ninja.dev/)🥷🏾🥷🏾 evangelist/disciple...I love love love the project and i try to introduce it any way or shape i can. Nothing against OG DjangoRestFramework.
 
 you can should definetly give the project a try 😎😎
-```
+```zsh
 django-admin startapp api
 ```
 
-# register the new app in config/settings.py
-```
+### register the new app in config/settings.py
+```python
 # config/settings.py
 
 ...
@@ -196,7 +196,7 @@ INSTALLED_APPS = [
 ```
 
 ### Create a schema, router, and api scripts
-```
+```zsh
 touch api/schema.py
 touch api/routers.py
 touch api/scripts.py
@@ -212,7 +212,7 @@ touch api/scripts.py
 ### Schema
 Schema converts django ORM to native pydantic types which gives you quick field validation out of the box. eg Enums, email, IPAddress, URLs, JSON,.It also gives you the ability to validate Fields, Nested models, and even create custom fields.
 
-```
+```python
 # api/schema.py
 from typing import Optional
 from ninja import ModelSchema, Schema
@@ -248,7 +248,7 @@ class UserDetailSchema(Schema):
 ### Routers
 If you are familiar with djangorestframework and  understand viewsets and routers, then you will understand the concept of routers in django-ninja.
 
-```
+```python
 # api/routers.py
 from ninja import NinjaAPI
 from .api import router as user_router
@@ -263,7 +263,7 @@ api.add_router('/user', user_router)
 This is where the magic happens. This is where you define your views and the logic that goes with it.
 we design the api to create a user and list users based on the user type.
 
-```
+```python
 # api/api.py
 from ninja import Router
 from .schema import UserRegisterSchema, UserDetailSchema
@@ -276,12 +276,16 @@ router = Router()
 def create_user(request, payload: UserRegisterSchema):
     payload_dict = payload.dict()
     user_role = payload_dict.pop('user_role')
+    password = payload_dict.pop('password')
+
     if user_role == 'business':
         user = Business(**payload_dict)
-        user.save()
     elif user_role == 'client':
         user = Client(**payload_dict)
-        user.save()
+    
+    # Hash the password
+    user.set_password(password)
+    user.save()
     return user
 
 
@@ -315,7 +319,7 @@ def list_users(request, user_type: str = 'all'):
 ```
 >Notice how you need only one endpoint to create users of different types. This is the power of proxy models and the managers we created earlier.
 
-```
+```python
 # config/urls.py
 from django.contrib import admin
 from django.urls import path
@@ -335,7 +339,7 @@ You can run the server ```python.manage.py runserver``` and test the api endpoin
 > you can clone this project from [github](git@github.com:femiir/multiple-user.git) and run the project to see how it works.
 
 > At the end of the project your folder structure should look like 
-```
+```bash
 ├── config
 │   ├── asgi.py
 │   ├── __init__.py

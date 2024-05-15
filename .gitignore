@@ -10,4 +10,5 @@ Thumbs.db
 db.sqlite3
 ruff.toml
 article.code-workspace
+.dockerignore
 
